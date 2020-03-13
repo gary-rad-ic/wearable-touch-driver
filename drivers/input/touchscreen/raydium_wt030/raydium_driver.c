@@ -1,4 +1,4 @@
-/* drivers/input/touchscreen/raydium_ts.c
+/* drivers/input/touchscreen/raydium_wt030/raydium_driver.c
  *
  * Raydium TouchScreen driver.
  *
@@ -2287,6 +2287,6 @@ static void __exit raydium_ts_exit(void)
 module_init(raydium_ts_init);
 module_exit(raydium_ts_exit);
 
-MODULE_AUTHOR("<Rejion>");
+MODULE_AUTHOR("Raydium");
 MODULE_DESCRIPTION("Raydium TouchScreen driver");
 MODULE_LICENSE("GPL");

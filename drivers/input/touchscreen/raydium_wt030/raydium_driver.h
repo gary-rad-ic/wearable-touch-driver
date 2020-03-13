@@ -1,3 +1,20 @@
+/* drivers/input/touchscreen/raydium_wt030/raydium_driver.h
+ *
+ * Raydium TouchScreen driver.
+ *
+ * Copyright (c) 2010  Raydium tech Ltd.
+ *
+ * This software is licensed under the terms of the GNU General Public
+ * License version 2, as published by the Free Software Foundation, and
+ * may be copied, distributed, and modified under those terms.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+
 #ifndef __LINUX_RAYDIUM_H
 #define __LINUX_RAYDIUM_H
 #define RAYDIUM_NAME "raydium_ts"
@@ -351,4 +368,8 @@ extern struct raydium_ts_data *g_raydium_ts;
 
 #endif
 #endif  /*__LINUX_RAYDIUM_H*/
+
+MODULE_AUTHOR("Raydium");
+MODULE_DESCRIPTION("Raydium TouchScreen driver");
+MODULE_LICENSE("GPL");
 

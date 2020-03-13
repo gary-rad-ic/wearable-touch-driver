@@ -1,4 +1,4 @@
-/* drivers/input/touchscreen/raydium_burn_ts.c
+/* drivers/input/touchscreen/raydium_wt030/raydium_fw_update.c
  *
  * Raydium TouchScreen driver.
  *
@@ -1838,3 +1838,7 @@ int raydium_load_test_fw(struct i2c_client *client)
 exit_upgrade:
 	return i32_ret;
 }
+
+MODULE_AUTHOR("Raydium");
+MODULE_DESCRIPTION("Raydium TouchScreen driver");
+MODULE_LICENSE("GPL");
