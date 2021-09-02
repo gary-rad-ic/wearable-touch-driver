@@ -1,20 +1,3 @@
-/* drivers/input/touchscreen/raydium_wt030/raydium_driver.h
- *
- * Raydium TouchScreen driver.
- *
- * Copyright (c) 2010  Raydium tech Ltd.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- */
-
 #ifndef __LINUX_RAYDIUM_H
 #define __LINUX_RAYDIUM_H
 #define RAYDIUM_NAME "raydium_ts"
@@ -22,7 +5,7 @@
 #define I2C_VTG_MIN_UV    1800000
 #define I2C_VTG_MAX_UV    1800000
 #define RAD_MAIN_VERSION	0x01
-#define RAD_MINOR_VERSION	0x07
+#define RAD_MINOR_VERSION	0x01
 #define RAD_CUSTOMER_VERSION	0x0100
 
 #if defined(CONFIG_TOUCHSCREEN_RM_TS)
@@ -33,15 +16,16 @@
 #define RAYDIUM_RESET_DELAY_MSEC      100
 
 /* I2C bus slave address(ID) */
-#define RAYDIUM_I2C_EID    (0x5A)
-#define RAYDIUM_I2C_NID    (0x39)
+#define RAYDIUM_I2C_EID		(0x5A)
+#define RAYDIUM_I2C_NID		(0x39)
+#define RAYDIUM_I2C_PDA_CMD	0x66
 
 /* I2C R/W configuration literal */
 #define RAYDIUM_I2C_WRITE       I2C_SMBUS_WRITE
 #define RAYDIUM_I2C_READ        I2C_SMBUS_READ
-#define SYN_I2C_RETRY_TIMES     2
-#define MAX_WRITE_PACKET_SIZE   64
-#define MAX_READ_PACKET_SIZE    64
+#define SYN_I2C_RETRY_TIMES     1
+#define MAX_WRITE_PACKET_SIZE   128
+#define MAX_READ_PACKET_SIZE    128
 
 /* PDA address and bit definition*/
 #define RAD_READ_FT_DATA_CMD        0x2000019C
@@ -51,21 +35,23 @@
 #define RAD_GESTURE_ENABLE          0x20
 /* 4bytes, [0]:ready ; [1]:type ; [2]:direction*/
 #define RAD_GESTURE_RESULT_CMD      0x200005F0
-#define RAD_CHK_I2C_CMD				0x500009BC
-#define RAD_PDA2_CTRL_CMD           0x50000628
 #define RAD_ENABLE_PDA2             0x04
-#define RAD_ENABLE_SI2				0x02
+#define RAD_ENABLE_SI2	            0x02
 
 /* PDA literal */
 #define MASK_8BIT    0xFF
 #define RAD_I2C_PDA_ADDRESS_LENGTH    4
-#define PDA_MODE     1
-#define PDA2_MODE    2
+#define PDA_MODE     0x01
+#define PDA2_MODE    0x02
 #define RAD_I2C_PDA_MODE_DISABLE      0x00
 #define RAD_I2C_PDA_MODE_ENABLE       0x80
 /* Using byte mode due to data might be not word-aligment */
 #define RAD_I2C_PDA_MODE_WORD_MODE    0x40
 #define RAD_I2C_PDA_2_MODE_DISABLE    0x20
+
+#define I2C_PDA2_BYTE_MODE		0x03
+#define I2C_PDA2_WORD_MODE		0x43
+
 #define RAD_PALM_DISABLE    0x00
 #define RAD_PALM_ENABLE     0x01
 #define RAD_WAKE_UP			0x02
@@ -115,6 +101,59 @@
 #define RAYDIUM_HOST_CMD_TP_MODE            0x60
 #define RAYDIUM_HOST_CMD_FT_MODE            0x61
 
+/* Raydium Register define */
+#define RAYDIUM_PDA_BOOTVERSION			0x00000080
+#define RAYDIUM_PDA_FIRMWAREADDR		0x00000800
+#define RAYDIUM_PDA_PARAADDR			0x00007B00
+#define RAYDIUM_PDA_FIRMWARELENGTH		0x00007300
+#define RAYDIUM_PDA_PARALENGTH			0x00000178
+#define RAYDIUM_PDA_CRCLENGTH			0x00007474
+#define RAYDIUM_PDA_SYNCDATA			0x20000200
+#define RAYDIUM_PDA_BOOTENG1			0x20000204
+#define RAYDIUM_PDA_BOOTENG2			0x20000208
+#define RAYDIUM_PDA_BOOTENG3			0x2000020C
+#define RAYDIUM_PDA_BOOTENG4			0x20000210
+#define RAYDIUM_PDA_BOOTSTATE			0x20000214
+#define RAYDIUM_PDA_BOOTMODE			0x20000218
+#define RAYDIUM_PDA_BLKEN			0x40000000
+#define RAYDIUM_PDA_BLKRST			0x40000004
+#define RAYDIUM_PDA_MISCIER			0x40000014
+#define RAYDIUM_PDA_I2CENG			0x50000610
+#define RAYDIUM_PDA_FLASHPRO			0x50000624
+#define RAYDIUM_PDA_I2CREG			0x50000628
+#define RAYDIUM_PDA_PRAMLOCK			0x50000900
+#define RAYDIUM_PDA_PRAMTYPE			0x50000904
+#define RAYDIUM_PDA_PRAMADDR			0x50000908
+#define RAYDIUM_PDA_PRAMLENGTH			0x5000090C
+#define RAYDIUM_PDA_FLHADDR			0x50000910
+#define RAYDIUM_PDA_FLHCTL			0x50000914
+#define RAYDIUM_PDA_BOOTREG			0x50000918
+#define RAYDIUM_PDA_FLKEY1			0x50000934
+#define RAYDIUM_PDA_FLKEY2			0x50000938
+#define RAYDIUM_PDA_FLDATA			0x5000093C
+#define RAYDIUM_PDA_PRGCHKSUMENG		0x5000094C
+#define RAYDIUM_PDA_PRGCHKSUMADDR		0x50000974
+#define RAYDIUM_PDA_PRGCHKSUMRESULT		0x50000978
+#define RAYDIUM_CHK_I2C_CMD			0x500009BC
+#define RAYDIUM_REG_GPIO_DEGLITCH		0x50000E1C
+
+#define I2CTB_LOCK                          (0x00000001<<6)
+#define BOTLR_LOCK                          (0x00000001<<5)
+#define USEFW_LOCK                          (0x00000001<<4)
+#define CONFIG_LOCK                         (0x00000001<<3)
+#define COMP_LOCK                           (0x00000001<<2)
+#define BASEL_LOCK                          (0x00000001<<1)
+#define INICO_LOCK                          (0x00000001<<0)
+
+/* ['h5000_0904], [32'h0000_0000], Program RAM store type, PRAM_STORE_TYPE */
+#define BOTLR_AREA                          (0x00000001<<5)
+#define USEFW_AREA                          (0x00000001<<4)
+#define CONFIG_AREA                         (0x00000001<<3)
+#define COMP_AREA                           (0x00000001<<2)
+#define BASEL_AREA                          (0x00000001<<1)
+#define INICO_AREA                          (0x00000001<<0)
+
+
 /* PDA2 literal */
 /* entry byte + target page byte */
 #define RAYDIUM_I2C_PDA2_PAGE_LENGTH        2
@@ -127,21 +166,20 @@
 #define PRESS_MAX                     0xFFFF
 #define WIDTH_MAX                     0xFFFF
 #define BYTE_SHIFT         8
+#define TOUCH_PRESS					0
+#define TOUCH_RELEASE				1
+#define TOUCH_MOVE					2
+#define TOUCH_COVER					3
+#define TOUCH_SHORTCLICK			4
 
 /* FW update literal */
 #define RAYDIUM_FW_BIN_PATH_LENGTH    256
 
-#define RAD_BOOT_1X_SIZE		0x800
-#define RAD_INIT_1X_SIZE		0x200
-#define RAD_FW_1X_SIZE			0x5000
-#define RAD_PARA_1X_SIZE		0xE4
-#define RAD_TESTFW_1X_SIZE		0x5600
-
-#define RAD_BOOT_2X_SIZE		0x800
-#define RAD_INIT_2X_SIZE		0x200
-#define RAD_FW_2X_SIZE			0x6200
-#define RAD_PARA_2X_SIZE		0x15C
-#define RAD_TESTFW_2X_SIZE		(RAD_FW_2X_SIZE + RAD_PARA_2X_SIZE + 4)
+#define RAD_BOOT_3X_SIZE		0x800
+#define RAD_INIT_3X_SIZE		0x80
+#define RAD_FW_3X_SIZE			0x7300
+#define RAD_PARA_3X_SIZE		0x174
+#define RAD_TESTFW_3X_SIZE		(RAD_FW_3X_SIZE + RAD_PARA_3X_SIZE + 4)
 
 #define RAD_CMD_UPDATE_BIN		0x80
 #define RAD_CMD_UPDATE_END		0x81
@@ -153,12 +191,12 @@
 #define RAD_FT_CMD_LENGTH   0x02
 
 /* FT APK data type */
-#define RAYDIUM_FT_UPDATE    0x01
+#define RAYDIUM_FT_UPDATE    0x00
 
 /*Raydium system flag*/
 #define INT_FLAG	0x01
 #define ENG_MODE	0x02
-
+#define NORMAL_MODE	0x00
 /* define display mode */
 #define ACTIVE_MODE     0x00
 #define AMBIENT_MODE    0x01
@@ -173,26 +211,17 @@
 /* Enable FW update */
 /* #define FW_UPDATE_EN */
 /* #define FW_MAPPING_EN */
-#define HOST_NOTIFY_EN
 #define MSM_NEW_VER
 
 /* enable ESD */
 /* #define ESD_SOLUTION_EN */
-/* #define ENABLE_DUMP_DATA */
-/* #define ENABLE_FLASHLOG_BACKUP */
-#ifdef ENABLE_DUMP_DATA
-#define DATA_MAP_5_5 0
-#endif
 
-
+#define RAD_SELFTEST
+#define PARA_FW_VERSION_OFFSET	4
 
 #define PINCTRL_STATE_ACTIVE     "pmx_ts_active"
 #define PINCTRL_STATE_SUSPEND    "pmx_ts_suspend"
 #define PINCTRL_STATE_RELEASE    "pmx_ts_release"
-
-#if defined(CONFIG_TOUCHSCREEN_RM_TS_SELFTEST)
-#define RAD_SELFTEST
-#endif
 
 struct raydium_ts_data {
 	unsigned int irq;
@@ -200,15 +229,8 @@ struct raydium_ts_data {
 	unsigned int rst_gpio;
 	unsigned int x_max;
 	unsigned int y_max;
-#ifdef FILTER_POINTS
 	unsigned int x_pos[2];
 	unsigned int y_pos[2];
-	unsigned int last_x_pos[2];
-	unsigned int last_y_pos[2];
-#else
-	unsigned int x_pos[2];
-	unsigned int y_pos[2];
-#endif
 	unsigned int pressure;
 	unsigned int is_suspend;
 	unsigned int is_sleep;
@@ -245,10 +267,6 @@ struct raydium_ts_data {
 	struct pinctrl_state *pinctrl_state_release;
 #endif /*end of MSM_NEW_VER*/
 
-#ifdef ENABLE_DUMP_DATA
-	struct delayed_work dump_work;
-
-#endif /*end of ENABLE_DUMP_DATA*/
 
 };
 struct raydium_platform_data {
@@ -299,14 +317,22 @@ enum raydium_pt_report_idx {
 	LEN_PT = 11
 };
 
+enum raydium_log_level {
+	LOG_NONE = 0,
+	LOG_ALERT,
+	LOG_ERR,
+	LOG_WARNING,
+	LOG_INFO,
+	LOG_DEBUG = 5
+};
 extern int raydium_read_touchdata(unsigned char *tp_status,  unsigned char *buf);
-extern unsigned char raydium_mem_table_setting(void);
+extern int raydium_mem_table_setting(void);
 extern int wait_fw_state(struct i2c_client *client, unsigned int u32_addr,
 			 unsigned int u32_state, unsigned long u32_delay_us,
 			 unsigned short u16_retry);
 extern int wait_irq_state(struct i2c_client *client,
-				unsigned int u32_retry_time,
-				unsigned int u32_delay_us);
+			  unsigned int u32_retry_time,
+			  unsigned int u32_delay_us);
 extern void raydium_irq_control(bool enable);
 
 extern int raydium_i2c_mode_control(struct i2c_client *client,
@@ -315,8 +341,14 @@ extern int raydium_i2c_pda_read(struct i2c_client *client,
 				unsigned int u32_addr, unsigned char *u8_r_data,
 				unsigned short u16_length);
 extern int raydium_i2c_pda_write(struct i2c_client *client,
-			unsigned int u32_addr, unsigned char *u8_w_data,
-			unsigned short u16_length);
+				 unsigned int u32_addr, unsigned char *u8_w_data,
+				 unsigned short u16_length);
+extern int handle_i2c_pda_write(struct i2c_client *client,
+				unsigned int u32_addr, unsigned char *u8_w_data,
+				unsigned short u16_length);
+extern int handle_i2c_pda_read(struct i2c_client *client,
+			       unsigned int u32_addr, unsigned char *u8_r_data,
+			       unsigned short u16_length);
 extern int raydium_i2c_pda2_read(struct i2c_client *client,
 				 unsigned char u8_addr,
 				 unsigned char *u8_r_data,
@@ -326,24 +358,28 @@ extern int raydium_i2c_pda2_write(struct i2c_client *client,
 				  unsigned char *u8_w_data,
 				  unsigned short u16_length);
 extern int raydium_i2c_pda2_set_page(struct i2c_client *client,
-				unsigned int is_suspend,
-				unsigned char u8_page);
+				     unsigned int is_suspend,
+				     unsigned char u8_page);
+extern int raydium_i2c_write_pda_via_pda2(struct i2c_client *client,
+		unsigned int u32_addr, unsigned char *u8_w_data,
+		unsigned short u16_length);
+extern int raydium_i2c_read_pda_via_pda2(struct i2c_client *client,
+		unsigned int u32_addr, unsigned char *u8_r_data,
+		unsigned short u16_length);
+extern unsigned char raydium_disable_i2c_deglitch(void);
 extern unsigned char raydium_selftest_stop_mcu(struct i2c_client *client);
 extern int raydium_burn_comp(struct i2c_client *client);
 extern int raydium_burn_fw(struct i2c_client *client);
-extern int raydium_fw_upgrade_with_bin_file(struct i2c_client *client,
-		char *arguments,
-		size_t count,
-		struct device *dev);
+
 extern int raydium_load_test_fw(struct i2c_client *client);
 extern int raydium_fw_update_check(unsigned short u16_i2c_data);
 extern int raydium_i2c_pda_set_address(unsigned int u32_address,
 				       unsigned char u8_mode);
-extern unsigned char raydium_mem_table_init(unsigned short u16_id);
-extern unsigned char raydium_id_init(unsigned char u8_type);
+extern void raydium_mem_table_init(unsigned short u16_id);
+extern int raydium_id_init(unsigned char u8_type);
 
 #ifdef RAD_SELFTEST
-extern int raydium_do_selftest(void);
+extern int raydium_do_selftest(struct raydium_ts_data *ts);
 #endif
 int raydium_esd_check(void);
 
@@ -355,7 +391,7 @@ extern unsigned char g_u8_addr;
 extern unsigned char g_u8_i2c_mode;
 extern unsigned char g_u8_upgrade_type;
 extern unsigned char g_u8_raw_data_type;
-extern unsigned int g_u32_raw_data_len;    /* 72 bytes*/
+extern unsigned int g_u32_raw_data_len;    /* 128 bytes*/
 extern unsigned int g_u32_length;
 extern unsigned long g_u32_addr;
 extern unsigned char *g_rad_fw_image, *g_rad_init_image;
@@ -365,11 +401,13 @@ extern unsigned char g_u8_table_setting, g_u8_table_init;
 extern unsigned int g_u32_driver_version;
 extern unsigned char g_u8_resetflag;
 extern struct raydium_ts_data *g_raydium_ts;
+extern unsigned char g_u8_log_level;
 
+#define LOGD(a, fmt, ...) {\
+	if (a <= g_u8_log_level) {\
+		pr_info(pr_fmt(fmt), ##__VA_ARGS__);\
+	} \
+}
 #endif
 #endif  /*__LINUX_RAYDIUM_H*/
-
-MODULE_AUTHOR("Raydium");
-MODULE_DESCRIPTION("Raydium TouchScreen driver");
-MODULE_LICENSE("GPL");
 
