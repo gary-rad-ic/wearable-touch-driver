@@ -1,7 +1,8 @@
-/*
- * File:    raydium_selftest.c
- * Author:  Valentine <valentine.hsu@rad-ic.com>
- * Brief:   rm31080 touch screen test tool.
+/* raydium_selftest.c
+ *
+ * Raydium TouchScreen driver.
+ *
+ * Copyright (c) 2021  Raydium tech Ltd.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,6 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+ *
  */
 
 #include <linux/delay.h>

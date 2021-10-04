@@ -1,35 +1,20 @@
-//****************************************************************************
-//;***************************************************************************
-//; Raydium Semiconductor Corporation.
-//; Design Division V.,
-//; Touch System and Firmware Design Depr II.
-//; Raydium Application Software.
-//;***************************************************************************
-//; Project Name : T009
-//; File Name      : ic_drv_global.h
-//; Built Date      : 2012/02/22
-//;
-//; Copyright 2006 Raydium Semiconductor Corporation.
-//; 2F, No.23, Li-Hsin Rd.,
-//; Hsinchu Science Park, Hsinchu 300,
-//; Taiwan, R.O.C.
-//; Email : @rad-ic.com
-//; Website : www.rad-ic.com
-//; All rights are reserved. Reproduction in whole or part is prohibited
-//; without the prior written consent of the copyright owner.
-//;
-//; COMPANY CONFIDENTIAL
-//;***************************************************************************
-//
-// Revision History:
-// Rev     Date        Author
-//____________________________________________________________________________
-//
-// Build.
-//
-// Includes Sensor IC Scan and Get Raw Data Related Function Header Files
-//;---------------------------------------------------------------------------
-//****************************************************************************
+/* i2c_drv_global.h
+ *
+ * Raydium TouchScreen driver.
+ *
+ * Copyright (c) 2021  Raydium tech Ltd.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
 
 #ifndef _DRVGLOBAL_H_
 #define _DRVGLOBAL_H_

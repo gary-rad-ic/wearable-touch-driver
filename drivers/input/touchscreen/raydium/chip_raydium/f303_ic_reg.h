@@ -1,7 +1,22 @@
-//****************************************************************************
-//                            Defined Const Value
-//*****************************************************************************
-// ['h5000_0900], [32'hFFFF_FFFF], PRAM_LOCK
+/* f303_ic_reg.h
+ *
+ * Raydium TouchScreen driver.
+ *
+ * Copyright (c) 2021  Raydium tech Ltd.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+
+ // ['h5000_0900], [32'hFFFF_FFFF], PRAM_LOCK
 #define I2CTB_LOCK                          (0x00000001<<6)      // [0] (R/W) I2C Table lock
 #define BOTLR_LOCK                          (0x00000001<<5)      // [0] (R/W) Boot loader lock
 #define USEFW_LOCK                          (0x00000001<<4)      // [0] (R/W) User fw lock

@@ -1,3 +1,21 @@
+/* tpselftest_30.h
+ *
+ * Raydium TouchScreen driver.
+ *
+ * Copyright (c) 2021  Raydium tech Ltd.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+
 #define RAD_SELFTEST_30 0x3202
 unsigned char u8_test_info_30[16]={
 0x03,0x02,0x02,0x06,0x5D,0x00,0x00,0xAC,
