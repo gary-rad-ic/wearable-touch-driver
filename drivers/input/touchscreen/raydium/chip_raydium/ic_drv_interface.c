@@ -89,7 +89,7 @@ STATUS wearable_ic_test_read_info(void)
 	if (read_flash_data(g_u32_dongle_flash_ini_addr, 16) != ERROR) {
 		memcpy(&g_st_test_info, g_u8_data_buf, sizeof(g_st_test_info));
 	} else {
-		DEBUGOUT("Read Flash Data ERROR\r\n");
+		DEBUGOUT("Read Flash Data ERROR\n");
 		return ERROR;
 	}
 
@@ -103,7 +103,7 @@ STATUS wearable_ic_test_info_init(void)
 #endif
 
 	if (!wearable_ic_test_read_info()) {
-		DEBUGOUT("Read Info ERROR\r\n");
+		DEBUGOUT("Read Info ERROR\n");
 		return ERROR;
 	}
 
@@ -111,16 +111,16 @@ STATUS wearable_ic_test_info_init(void)
 		g_st_test_info.u16_ft_test_item &= g_u16_test_items_host_cmd;
 	g_u16_panel_jig_set_test_items |= g_st_test_info.u16_ft_test_item;
 
-	DEBUGOUT("TestItem:0x%x:0x%x\r\n", g_st_test_info.u16_ft_test_item, g_st_test_info.u16_ft_eng_item);
-	DEBUGOUT("g_u16_panel_jig_set_test_items:0x%x\r\n", g_u16_panel_jig_set_test_items);
+	DEBUGOUT("TestItem:0x%x:0x%x\n", g_st_test_info.u16_ft_test_item, g_st_test_info.u16_ft_eng_item);
+	DEBUGOUT("g_u16_panel_jig_set_test_items:0x%x\n", g_u16_panel_jig_set_test_items);
 	if (read_flash_data(g_u32_ini_threshold_addr, 36)) {
 		memcpy(&g_st_test_thd, g_u8_data_buf, sizeof(g_st_test_thd));
 	} else {
-		DEBUGOUT("Read THD Data ERROR\r\n");
+		DEBUGOUT("Read THD Data ERROR\n");
 		return ERROR;
 	}
 
-	DEBUGOUT("THD:\r\n%d,%d,%d,%d,\r\n%d,%d,%d,%d,\r\n%d,%d,%d,%d\r\n",
+	DEBUGOUT("THD:\n%d,%d,%d,%d,\n%d,%d,%d,%d,\n%d,%d,%d,%d\n",
 		 g_st_test_thd.i16_ft_test_open_lower_thd,
 		 g_st_test_thd.i16_ft_test_short_upper_thd,
 		 g_st_test_thd.i16_ft_test_short_lower_thd,
@@ -137,12 +137,12 @@ STATUS wearable_ic_test_info_init(void)
 	if (read_flash_data(g_u32_ini_para_addr, 48)) {
 		memcpy(&g_st_test_para_resv, g_u8_data_buf, sizeof(g_st_test_para_resv));
 	} else {
-		DEBUGOUT("Read INI Para ERROR\r\n");
+		DEBUGOUT("Read INI Para ERROR\n");
 		return ERROR;
 	}
 
 #if 0
-	DEBUGOUT(" g_st_test_para_resv.u32_normal_fw_version = %X ,g_st_test_para_resv.u32_test_fw_version= %X \r\n",
+	DEBUGOUT(" g_st_test_para_resv.u32_normal_fw_version = %X ,g_st_test_para_resv.u32_test_fw_version= %X \n",
 		 g_st_test_para_resv.u32_normal_fw_version,
 		 g_st_test_para_resv.u32_test_fw_version
 		);
@@ -152,11 +152,11 @@ STATUS wearable_ic_test_info_init(void)
 		if (read_flash_data(g_u32_ini_raw_data_3_cc_addr, 128)) {
 			memcpy(g_u16_raw_data3_golden_cc_buf, g_u8_data_buf, sizeof(g_u16_raw_data3_golden_cc_buf));
 		} else {
-			DEBUGOUT("read raw data 3 cc ERROR\r\n");
+			DEBUGOUT("read raw data 3 cc ERROR\n");
 			return ERROR;
 		}
 #if 0
-		DEBUGOUT(" g_u16_raw_data3_golden_cc_buf[0] = %d,g_u16_raw_data3_golden_cc_buf[1 =%d g_u16_raw_data3_golden_cc_buf[2]=%d,\r\n",
+		DEBUGOUT(" g_u16_raw_data3_golden_cc_buf[0] = %d,g_u16_raw_data3_golden_cc_buf[1 =%d g_u16_raw_data3_golden_cc_buf[2]=%d,\n",
 			 g_u16_raw_data3_golden_cc_buf[0],
 			 g_u16_raw_data3_golden_cc_buf[1],
 			 g_u16_raw_data3_golden_cc_buf[2]
@@ -165,18 +165,18 @@ STATUS wearable_ic_test_info_init(void)
 		if (read_flash_data(g_u32_ini_uc_cc_addr, 128)) {
 			memcpy(g_u16_uc_golden_cc_buf, g_u8_data_buf, sizeof(g_u16_uc_golden_cc_buf));
 		} else {
-			DEBUGOUT("read uc cc ERROR\r\n");
+			DEBUGOUT("read uc cc ERROR\n");
 			return ERROR;
 		}
 	} else if (g_u16_dev_id == DEVICE_ID_2X) {
 		if (read_flash_data(g_u32_ini_raw_data_3_cc_addr, 72)) {
 			memcpy(g_u16_raw_data3_golden_cc_buf, g_u8_data_buf, sizeof(g_u16_raw_data3_golden_cc_buf));
 		} else {
-			DEBUGOUT("read raw data 3 cc ERROR\r\n");
+			DEBUGOUT("read raw data 3 cc ERROR\n");
 			return ERROR;
 		}
 #if 0
-		DEBUGOUT(" g_u16_raw_data3_golden_cc_buf[0] = %d,g_u16_raw_data3_golden_cc_buf[1 =%d g_u16_raw_data3_golden_cc_buf[2]=%d,\r\n",
+		DEBUGOUT(" g_u16_raw_data3_golden_cc_buf[0] = %d,g_u16_raw_data3_golden_cc_buf[1 =%d g_u16_raw_data3_golden_cc_buf[2]=%d,\n",
 			 g_u16_raw_data3_golden_cc_buf[0],
 			 g_u16_raw_data3_golden_cc_buf[1],
 			 g_u16_raw_data3_golden_cc_buf[2]
@@ -185,7 +185,7 @@ STATUS wearable_ic_test_info_init(void)
 		if (read_flash_data(g_u32_ini_uc_cc_addr, 72)) {
 			memcpy(g_u16_uc_golden_cc_buf, g_u8_data_buf, sizeof(g_u16_uc_golden_cc_buf));
 		} else {
-			DEBUGOUT("read uc cc ERROR\r\n");
+			DEBUGOUT("read uc cc ERROR\n");
 			return ERROR;
 		}
 	}
@@ -259,6 +259,6 @@ void handle_ic_test(void)
 void handle_set_display_interface(unsigned char u8_interface)
 {
 	g_u8_display_interface = u8_interface;
-	DEBUGOUT("handle_set_display_interface: 0x%x \r\n", u8_interface);
+	DEBUGOUT("handle_set_display_interface: 0x%x \n", u8_interface);
 }
 

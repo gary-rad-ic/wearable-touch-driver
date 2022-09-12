@@ -1183,7 +1183,7 @@ static ssize_t raydium_log_level_store(struct device *dev,
 	if (i32_ret < 0)
 		return i32_ret;
 	g_u8_log_level = u8_level;
-	LOGD(LOG_ERR, "[touch]g_u8_log_level = %d\r\n", g_u8_log_level);
+	LOGD(LOG_ERR, "[touch]g_u8_log_level = %d\n", g_u8_log_level);
 	return count;
 }
 

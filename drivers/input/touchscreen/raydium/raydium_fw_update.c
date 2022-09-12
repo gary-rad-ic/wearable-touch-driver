@@ -323,7 +323,7 @@ int raydium_do_software_reset(struct i2c_client *client)
 
 	msleep(35);
 	if (raydium_disable_i2c_deglitch() == ERROR) {
-		LOGD(LOG_ERR, "[touch] 1.disable_i2c_deglitch_3x NG!\r\n");
+		LOGD(LOG_ERR, "[touch] 1.disable_i2c_deglitch_3x NG!\n");
 		goto exit;
 	}
 exit:
@@ -523,11 +523,11 @@ unsigned char raydium_stop_mcu_3x(unsigned char u8_is_tp_reset)
 		g_u8_i2c_mode = PDA2_MODE;
 		msleep(35);
 		if (raydium_disable_i2c_deglitch() == ERROR) {
-			LOGD(LOG_ERR, "[touch] disable_i2c_deglitch_3x NG!\r\n");
+			LOGD(LOG_ERR, "[touch] disable_i2c_deglitch_3x NG!\n");
 			return ERROR;
 		}
 	}
-	LOGD(LOG_INFO, "[touch]%s\r\n", __func__);
+	LOGD(LOG_INFO, "[touch]%s\n", __func__);
 
 	u32_write = 0x30;
 	if (handle_i2c_pda_write(g_raydium_ts->client, RAYDIUM_PDA_BOOTREG
@@ -543,10 +543,10 @@ unsigned char raydium_stop_mcu_3x(unsigned char u8_is_tp_reset)
 	msleep(100);
 
 	if (raydium_disable_i2c_deglitch() == ERROR) {
-		LOGD(LOG_ERR, "[touch] disable_i2c_deglitch_3x NG!\r\n");
+		LOGD(LOG_ERR, "[touch] disable_i2c_deglitch_3x NG!\n");
 		return ERROR;
 	}
-	LOGD(LOG_INFO, "[touch] stop_mcu 2\r\n");
+	LOGD(LOG_INFO, "[touch]stop_mcu 2\n");
 
 	if (handle_i2c_pda_read(g_raydium_ts->client, RAYDIUM_PDA_BOOTREG
 				, (unsigned char *)(&u32_read_data), 4) == ERROR) {
@@ -561,7 +561,7 @@ unsigned char raydium_stop_mcu_3x(unsigned char u8_is_tp_reset)
 		}
 	}
 
-	LOGD(LOG_DEBUG, "[touch]Stop MCU=0x%X(0x%x)(%d)!!\r\n", u32_read_data, (u32_read_data & 0x2000), u16_time_out);
+	LOGD(LOG_DEBUG, "[touch]Stop MCU=0x%X(0x%x)(%d)!!\n", u32_read_data, (u32_read_data & 0x2000), u16_time_out);
 
 	if ((u32_read_data & 0x2000) == 0)
 		return ERROR;
@@ -586,7 +586,7 @@ static int raydium_fw_upgrade_3X(struct i2c_client *client,
 	if (handle_i2c_pda_read(client, RAYDIUM_PDA_BOOTVERSION, u8_buf, 4) == ERROR)
 		return ERROR;
 	u32_write = (u8_buf[3] << 24) | (u8_buf[2] << 16) | (u8_buf[1] << 8) | u8_buf[0];
-	LOGD(LOG_INFO, "[touch]bootloader ver: 0x%x\r\n", u32_write);
+	LOGD(LOG_INFO, "[touch]bootloader ver: 0x%x\n", u32_write);
 
 	if (u8_type != RAYDIUM_COMP) {
 		if (raydium_stop_mcu_3x(0) == ERROR)
@@ -686,8 +686,8 @@ static int raydium_fw_upgrade_3X(struct i2c_client *client,
 	/*#confirm in burn mode*/
 	if (wait_fw_state(client, RAYDIUM_PDA_BOOTSTATE, 0xFF,
 			  2000, u16_retry) == ERROR) {
-		LOGD(LOG_ERR, "[touch]bootloader wrt empty flash fail\r\n");
-		LOGD(LOG_ERR, "[touch]bootloader confirm in burn mode fail, Type=%d\r\n", u8_type);
+		LOGD(LOG_ERR, "[touch]bootloader wrt empty flash fail\n");
+		LOGD(LOG_ERR, "[touch]bootloader confirm in burn mode fail, Type=%d\n", u8_type);
 		i32_ret = ERROR;
 		goto exit_upgrade;
 	}
@@ -1164,7 +1164,7 @@ int raydium_load_test_fw(struct i2c_client *client)
 	if (handle_i2c_pda_read(client, 0x80, (unsigned char *)(&u32_read_data), 4) == ERROR) {
 		goto ERROR_EXIT;
 	}
-	LOGD(LOG_INFO, "[touch]Read bootloader ver=0x%x!!\r\n", u32_read_data);
+	LOGD(LOG_INFO, "[touch]Read bootloader ver=0x%x!!\n", u32_read_data);
 
 	u32_write = 0x0410;
 	if (handle_i2c_pda_write(client, RAYDIUM_PDA_BOOTREG, (unsigned char *)&u32_write, 4) == ERROR) {
@@ -1173,7 +1173,7 @@ int raydium_load_test_fw(struct i2c_client *client)
 	if (handle_i2c_pda_read(client, RAYDIUM_PDA_BOOTREG, (unsigned char *)(&u32_read_data), 4) == ERROR) {
 		goto ERROR_EXIT;
 	}
-	LOGD(LOG_DEBUG, "[touch]write MCU STATUS=0x%x!!\r\n", u32_read_data);
+	LOGD(LOG_DEBUG, "[touch]write MCU STATUS=0x%x!!\n", u32_read_data);
 	/*wait sw rst finish*/
 	u32_write = 1;
 
@@ -1183,11 +1183,11 @@ int raydium_load_test_fw(struct i2c_client *client)
 	if (handle_i2c_pda_read(client, RAYDIUM_PDA_BOOTREG, (unsigned char *)(&u32_read_data), 4) == ERROR) {
 		goto ERROR_EXIT;
 	}
-	LOGD(LOG_INFO, "[touch]Read MCU STATUS=0x%x!!\r\n", u32_read_data);
+	LOGD(LOG_INFO, "[touch]Read MCU STATUS=0x%x!!\n", u32_read_data);
 	if (handle_i2c_pda_read(client, 0x200006E4, (unsigned char *)(&u32_read_data), 4) == ERROR) {
 		goto ERROR_EXIT;
 	}
-	LOGD(LOG_INFO, "[touch]Read test fw version=0x%x!!\r\n", u32_read_data);
+	LOGD(LOG_INFO, "[touch]Read test fw version=0x%x!!\n", u32_read_data);
 
 	return SUCCESS;
 

@@ -53,7 +53,8 @@
 #include <linux/string.h>
 #include <linux/timer.h>
 #include <linux/fs.h>
-#include <asm/uaccess.h>
+
+#include <linux/uaccess.h>
 
 #include "drv_interface.h"
 #include "chip_raydium/ic_drv_interface.h"
@@ -61,7 +62,7 @@
 #include "chip_raydium/ic_drv_global.h"
 #include "tpselftest_30.h"
 #if defined(FW_MAPPING_EN)
-#include "tpselftest_21.h"
+#include "tpselftest_31.h"
 #endif
 
 #define RM_SELF_TEST_CUSTOMER_VERSION	0x01
@@ -87,7 +88,7 @@ static int self_test_all(void)
 	ret = g_u32_wearable_test_result;
 
 	/*g_u8_raydium_flag &= ~ENG_MODE;*/
-	DEBUGOUT("self_test_all end \r\n");
+	DEBUGOUT("self_test_all end \n");
 
 	return ret;
 }
@@ -95,17 +96,15 @@ static int self_test_all(void)
 int self_test_save_to_file(char *file_name, char *p_string, short len)
 {
 	struct file *filp = NULL;
-	mm_segment_t old_fs;
 
 	filp = filp_open(file_name, O_RDWR | O_CREAT | O_APPEND, 0666);
 	if (IS_ERR(filp)) {
 		DEBUGOUT("can't open file:%s\n", RM_SELF_TEST_LOGFILE);
 		return 0;
 	}
-	old_fs = get_fs();
-	set_fs(KERNEL_DS);
-	filp->f_op->write(filp, p_string, len, &filp->f_pos);
-	set_fs(old_fs);
+
+	kernel_write(filp, p_string, len, &filp->f_pos);	
+
 	filp_close(filp, NULL);
 
 	return 1;
@@ -131,7 +130,7 @@ static int raydium_check_ini_version(void)
 		g_u32_ini_raw_data_3_cc_addr = F303_INI_RAW_DATA_3_CC_ADDR;
 		g_u32_ini_uc_cc_addr = F303_INI_UC_CC_ADDR;
 		g_u32_initial_code_start_addr = F303_INITIAL_CODE_START_ADDR;
-		DEBUGOUT("[out_set_ic_version] F303 Set INI ADDR!\r\n");
+		DEBUGOUT("[out_set_ic_version] F303 Set INI ADDR!\n");
 	}
 	return ret;
 }
@@ -324,7 +323,7 @@ int self_test_save_test_raw_data_to_file(int i32_ng_type)
 			/*Raw data*/
 			/*Raw data slow*/
 			memset(write_string, 0, strlen(write_string));
-			sprintf(write_string, "\r\n\n\n");
+			sprintf(write_string, "\n\n\n");
 			self_test_save_to_file(RM_SELF_TEST_LOGFILE, write_string, strlen(write_string));
 			memset(write_string, 0, strlen(write_string));
 			sprintf(write_string, "Raw Data 1\n");
@@ -343,14 +342,14 @@ int self_test_save_test_raw_data_to_file(int i32_ng_type)
 				}
 
 				memset(write_string, 0, strlen(write_string));
-				sprintf(write_string, "\r\n");
+				sprintf(write_string, "\n");
 				self_test_save_to_file(RM_SELF_TEST_LOGFILE, write_string, strlen(write_string));
 
 			}
 		}
 		if ((g_st_test_info.u16_ft_test_item & (IC_TEST_ITEMS_OPEN)) != 0) {
 			memset(write_string, 0, strlen(write_string));
-			sprintf(write_string, "\r\n\n\n");
+			sprintf(write_string, "\n\n\n");
 			self_test_save_to_file(RM_SELF_TEST_LOGFILE, write_string, strlen(write_string));
 
 			/*Raw data slow*/
@@ -371,14 +370,14 @@ int self_test_save_test_raw_data_to_file(int i32_ng_type)
 				}
 
 				memset(write_string, 0, strlen(write_string));
-				sprintf(write_string, "\r\n");
+				sprintf(write_string, "\n");
 				self_test_save_to_file(RM_SELF_TEST_LOGFILE, write_string, strlen(write_string));
 
 			}
 		}
 		if ((g_st_test_info.u16_ft_test_item & (IC_TEST_ITEMS_OPEN | IC_TEST_ITEMS_SHORT)) != 0) {
 			memset(write_string, 0, strlen(write_string));
-			sprintf(write_string, "\r\n\n\n");
+			sprintf(write_string, "\n\n\n");
 			self_test_save_to_file(RM_SELF_TEST_LOGFILE, write_string, strlen(write_string));
 
 			/*Raw data 3*/
@@ -399,14 +398,14 @@ int self_test_save_test_raw_data_to_file(int i32_ng_type)
 				}
 
 				memset(write_string, 0, strlen(write_string));
-				sprintf(write_string, "\r\n");
+				sprintf(write_string, "\n");
 				self_test_save_to_file(RM_SELF_TEST_LOGFILE, write_string, strlen(write_string));
 
 			}
 		}
 		if ((g_st_test_info.u16_ft_test_item & (IC_TEST_ITEMS_UC)) != 0) {
 			memset(write_string, 0, strlen(write_string));
-			sprintf(write_string, "\r\n\n\n");
+			sprintf(write_string, "\n\n\n");
 			self_test_save_to_file(RM_SELF_TEST_LOGFILE, write_string, strlen(write_string));
 
 			/*Raw data Uniformity CC*/
@@ -419,7 +418,7 @@ int self_test_save_test_raw_data_to_file(int i32_ng_type)
 				if (g_u8_wearable_pin_map[u8_i] != F303_NA_P)
 					p_i16_buf[g_u8_wearable_pin_map[u8_i]] = g_u16_uc_buf[u8_i];
 
-			DEBUGOUT("Image:0x%x\r\n", p_i16_buf[0]);
+			DEBUGOUT("Image:0x%x\n", p_i16_buf[0]);
 
 			for (u8_j = 0; u8_j < g_u8_channel_y; u8_j++) {
 				for (u8_i = 0; u8_i < g_u8_channel_x; u8_i++) {
@@ -429,7 +428,7 @@ int self_test_save_test_raw_data_to_file(int i32_ng_type)
 				}
 
 				memset(write_string, 0, strlen(write_string));
-				sprintf(write_string, "\r\n");
+				sprintf(write_string, "\n");
 				self_test_save_to_file(RM_SELF_TEST_LOGFILE, write_string, strlen(write_string));
 
 			}
@@ -437,7 +436,7 @@ int self_test_save_test_raw_data_to_file(int i32_ng_type)
 	}
 
 	memset(write_string, 0, strlen(write_string));
-	sprintf(write_string, "\r\n\n\n");
+	sprintf(write_string, "\n\n\n");
 	self_test_save_to_file(RM_SELF_TEST_LOGFILE, write_string, strlen(write_string));
 
 	return 1;
@@ -446,8 +445,7 @@ int self_test_save_test_raw_data_to_file(int i32_ng_type)
 int self_test_read_setting_from_file(void)
 {
 	unsigned short u16_offset = 0;
-
-	DEBUGOUT("[touch]g_raydium_ts->id = 0x%x\r\n", g_raydium_ts->id);
+	DEBUGOUT("[touch]g_raydium_ts->id = 0x%x\n", g_raydium_ts->id);
 	switch (g_raydium_ts->id) {
 	case RAD_SELFTEST_30:
 		u16_offset = 0;
@@ -464,7 +462,7 @@ int self_test_read_setting_from_file(void)
 		u16_offset += 128;
 
 		memcpy((void *)(&g_st_test_para_resv), &u8_test_para_30[0], sizeof(g_st_test_para_resv));
-		DEBUGOUT("ini length = %d\r\n", u16_offset);
+		DEBUGOUT("ini length = %d\n", u16_offset);
 		break;
 #if defined(FW_MAPPING_EN)
 	case RAD_SELFTEST_31:
@@ -482,7 +480,7 @@ int self_test_read_setting_from_file(void)
 		u16_offset += 128;
 
 		memcpy((void *)(&g_st_test_para_resv), &u8_test_para_31[0], sizeof(g_st_test_para_resv));
-		DEBUGOUT("ini length = %d\r\n", u16_offset);
+		DEBUGOUT("ini length = %d\n", u16_offset);
 		break;
 #endif
 	}
@@ -494,7 +492,6 @@ int raydium_do_selftest(struct raydium_ts_data *ts)
 {
 	int ret = RESULT_SUCCESS;
 	unsigned int time_start, time_end, time_start2, time_end2;
-
 	time_start = get_system_time();
 
 	pr_info("Selftest Version=%x.%x.%x.%x.%x\n", RM_SELF_TEST_CUSTOMER_VERSION, RM_SELF_TEST_PLATFORM_VERSION,

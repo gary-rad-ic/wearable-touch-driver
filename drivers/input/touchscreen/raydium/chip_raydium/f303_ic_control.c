@@ -78,7 +78,7 @@ unsigned char check_dev_id_3x(unsigned short u16_dev_id)
 		g_u16_dev_id = DEVICE_ID_3X;
 		return SUCCESS;
 	} else {
-		DEBUGOUT("Device ID NG! 0x%x:0x%x\r\n", ((u32_read & 0xFFFF0000) >> 16), u16_dev_id);
+		DEBUGOUT("Device ID NG! 0x%x:0x%x\n", ((u32_read & 0xFFFF0000) >> 16), u16_dev_id);
 	}
 	return ERROR;
 }
@@ -90,11 +90,11 @@ unsigned char check_dev_sub_version_3x(unsigned char u8_version)
 	if (handle_ic_read(REG_FLASHCTL_DEVID_ADDR, 4, (unsigned char *)(&u32_read), g_u8_drv_interface, I2C_WORD_MODE) == ERROR) {
 		return ERROR;
 	}
-	DEBUGOUT("Device Sub Version 0x%x\r\n", u32_read);
+	DEBUGOUT("Device Sub Version 0x%x\n", u32_read);
 	if ((u32_read & 0x000000FF) == u8_version) {
 		return SUCCESS;
 	} else {
-		DEBUGOUT("Device Sub Version NG! 0x%x:0x%x\r\n", (u32_read & 0x000000FF), u8_version);
+		DEBUGOUT("Device Sub Version NG! 0x%x:0x%x\n", (u32_read & 0x000000FF), u8_version);
 	}
 	return ERROR;
 }
@@ -143,14 +143,14 @@ unsigned char disable_i2c_deglitch_3x(void)
 	}
 	if (u8_check == 3) {
 		if (!g_u8_mute_i2c_err_log)
-			DEBUGOUT("PDA2 OK\r\n");
+			DEBUGOUT("PDA2 OK\n");
 		return SUCCESS;
 	}
 
 	u8_retry = 100;
 	while (u8_retry--) {
 		if (handle_ic_write(REG_I2CENG_ADDR, 4, (unsigned char *)(&u32_i2c_deglitch), I2C_PDA_MODE, I2C_WORD_MODE) == ERROR) {
-			/*DEBUGOUT("[disable_i2c_deglitch_3x] handle_ic_write I2C NG!\r\n");*/
+			/*DEBUGOUT("[disable_i2c_deglitch_3x] handle_ic_write I2C NG!\n");*/
 			if (!g_u8_mute_i2c_err_log)
 				DEBUGOUT("[DI2CDG]-W");
 			continue;
@@ -161,7 +161,7 @@ unsigned char disable_i2c_deglitch_3x(void)
 			/*check I2C*/
 			u32_buf = 0;
 			if (handle_ic_read(REG_I2CENG_ADDR, 4, (unsigned char *)(&u32_buf), I2C_PDA_MODE, I2C_WORD_MODE) == ERROR) {
-				/*DEBUGOUT("[disable_i2c_deglitch_3x] 2.handle_ic_read I2C NG!\r\n");*/
+				/*DEBUGOUT("[disable_i2c_deglitch_3x] 2.handle_ic_read I2C NG!\n");*/
 				if (!g_u8_mute_i2c_err_log)
 					DEBUGOUT("[DI2CDG]-R");
 				break;
@@ -177,21 +177,21 @@ unsigned char disable_i2c_deglitch_3x(void)
 			break;
 	}
 	if (!g_u8_mute_i2c_err_log)
-		DEBUGOUT("\r\n");
+		DEBUGOUT("\n");
 
 	if (u8_retry == 0)
 		return ERROR;
 
 	u32_buf = GPIO_DEGLITCH_EN(3);
 	if (handle_ic_write(REG_GPIO_DEGLITCH_ENABLE, 4, (unsigned char *)(&u32_buf), I2C_PDA_MODE, I2C_WORD_MODE) == ERROR) {
-		DEBUGOUT("[DI2CDG_3x] 3.handle_ic_write I2C NG!\r\n");
+		DEBUGOUT("[DI2CDG_3x] 3.handle_ic_write I2C NG!\n");
 		return ERROR;
 	}
 
 	/*Enable PDA2*/
 	u32_buf = PDA2CTL_PDA2_EN | PDA2CTL_SIE2;
 	if (handle_ic_write(REG_PDA2CTL_ADDR, 4, (unsigned char *)(&u32_buf),  I2C_PDA_MODE, I2C_WORD_MODE) == ERROR) {
-		DEBUGOUT("[DI2CDG_3x] 4.i2c_write_pda I2C NG!\r\n");
+		DEBUGOUT("[DI2CDG_3x] 4.i2c_write_pda I2C NG!\n");
 		return ERROR;
 	}
 
@@ -219,12 +219,12 @@ unsigned char stop_mcu_3x(unsigned char u8_is_tp_reset)
 		gpio_touch_hw_reset();
 		delay_ms(35);
 		if (disable_i2c_deglitch_3x() == ERROR) {
-			DEBUGOUT("[stop_mcu_3x] 2.DI2CDG NG!\r\n");
+			DEBUGOUT("[stop_mcu_3x] 2.DI2CDG NG!\n");
 			goto EXIT_ERROR;
 		}
 	}
 
-	/*DEBUGOUT("[stop_mcu_3x] 1\r\n");*/
+	/*DEBUGOUT("[stop_mcu_3x] 1\n");*/
 
 	/*Stop MCU*/
 	/*memset(wData, 0, sizeof(wData));*/
@@ -240,14 +240,14 @@ unsigned char stop_mcu_3x(unsigned char u8_is_tp_reset)
 	delay_ms(20);
 
 	if (disable_i2c_deglitch_3x() == ERROR) {
-		/*DEBUGOUT("[stop_mcu_3x] 3.disable_i2c_deglitch_3x NG!\r\n");*/
-		DEBUGOUT("[stop_mcu_3x] 3.DI2CDG NG!\r\n");
+		/*DEBUGOUT("[stop_mcu_3x] 3.disable_i2c_deglitch_3x NG!\n");*/
+		DEBUGOUT("[stop_mcu_3x] 3.DI2CDG NG!\n");
 		goto EXIT_ERROR;
 	}
-	/*DEBUGOUT("[stop_mcu_3x] 2\r\n");*/
+	/*DEBUGOUT("[stop_mcu_3x] 2\n");*/
 
 	if (handle_ic_read(REG_FLASHCTL_FLASH_STATE_REG_ADDR, 4, (unsigned char *)(&u32_read_data), g_u8_drv_interface, I2C_WORD_MODE) == ERROR) {
-		DEBUGOUT("[stop_mcu_3x] 4.Flash State NG!\r\n");
+		DEBUGOUT("[stop_mcu_3x] 4.Flash State NG!\n");
 		goto EXIT_ERROR;
 	}
 
@@ -262,10 +262,10 @@ unsigned char stop_mcu_3x(unsigned char u8_is_tp_reset)
 #endif
 	}
 
-	DEBUGOUT("Stop MCU=0x%X(0x%x)(%d)!!\r\n", u32_read_data, (u32_read_data & MCU_HOLD_STATUS), u16_time_out);
+	DEBUGOUT("Stop MCU=0x%X(0x%x)(%d)!!\n", u32_read_data, (u32_read_data & MCU_HOLD_STATUS), u16_time_out);
 
 	if ((u32_read_data & MCU_HOLD_STATUS) == 0) {
-		DEBUGOUT("[stop_mcu_3x] 4.STOP MCU NG!\r\n");
+		DEBUGOUT("[stop_mcu_3x] 4.STOP MCU NG!\n");
 		goto EXIT_ERROR;
 	}
 
@@ -280,16 +280,15 @@ EXIT_ERROR:
 unsigned char hardware_reset_3x(unsigned char u8_enable_ic_block)
 {
 	unsigned char u8_time_out = 200;
-
-	DEBUGOUT("HW Reseting...\r\n");
+	DEBUGOUT("HW Reseting...\n");
 
 	gpio_touch_hw_reset();
 	delay_ms(100);
 
 	g_u8_mute_i2c_err_log = TRUE;
 	if (disable_i2c_deglitch_3x() == ERROR) {
-		/*DEBUGOUT("[hardware_reset_3x] disable_i2c_deglitch_3x NG!\r\n");*/
-		DEBUGOUT("[hardware_reset_3x] DI2CDG NG!\r\n");
+		/*DEBUGOUT("[hardware_reset_3x] disable_i2c_deglitch_3x NG!\n");*/
+		DEBUGOUT("[hardware_reset_3x] DI2CDG NG!\n");
 		g_u8_mute_i2c_err_log = FALSE;
 		return ERROR;
 	}
@@ -297,7 +296,7 @@ unsigned char hardware_reset_3x(unsigned char u8_enable_ic_block)
 
 	if (u8_enable_ic_block) {
 		if (enable_ic_block_3x() == ERROR) {
-			DEBUGOUT("HW Reset NG!!\r\n");
+			DEBUGOUT("HW Reset NG!!\n");
 			return ERROR;
 		}
 	}
@@ -315,7 +314,7 @@ unsigned char hardware_reset_3x(unsigned char u8_enable_ic_block)
 
 unsigned char set_fw_system_cmd_3x(unsigned int u32_sysm_cmd)
 {
-	unsigned char u8_time_out = 100, u8_value = 0;
+	unsigned char u8_time_out = 100, u8_value;
 
 	if (handle_ic_write(FW_SYS_CMD_ADDR, 4, (unsigned char *)&u32_sysm_cmd, g_u8_drv_interface, I2C_WORD_MODE) == ERROR)
 		return ERROR;
@@ -339,7 +338,6 @@ unsigned char set_fw_system_cmd_3x(unsigned int u32_sysm_cmd)
 unsigned char wait_fw_state_3x(unsigned int u32_addr, unsigned int u32_state, unsigned short u16_delay, unsigned short u16_retry)
 {
 	unsigned int u32_read_data = 0;
-
 	do {
 		if (handle_ic_read(u32_addr, 4, (unsigned char *)(&u32_read_data), g_u8_drv_interface, I2C_WORD_MODE) == ERROR) {
 			return ERROR;
@@ -363,12 +361,11 @@ unsigned char wait_fw_state_3x(unsigned int u32_addr, unsigned int u32_state, un
 unsigned char wait_T2D_done_state_3x(unsigned int u32_addr, unsigned short u16_delay, unsigned short u16_retry)
 {
 	unsigned int u32_read_data = 0;
-
 	do {
 		if (handle_ic_read(u32_addr, 4, (unsigned char *)(&u32_read_data), g_u8_drv_interface, I2C_WORD_MODE) == ERROR) {
 			return ERROR;
 		}
-		/*DEBUGOUT("[T2DW] ready 0x%x\r\n", u32_read_data);*/
+		/*DEBUGOUT("[T2DW] ready 0x%x\n", u32_read_data);*/
 
 		delay_ms(u16_delay);
 		u16_retry--;
@@ -453,18 +450,18 @@ unsigned char ReadFromDriver_3x(unsigned char *p_u8_addr, unsigned char u8_read_
 	unsigned int u32_write = 0;
 
 	if ((p_u8_addr[0] == 0xFE) || (p_u8_addr[0] == 0xFF) || (u8_read_len > 1)) {
-		DEBUGOUT("[ReadFromDriver_3x] no use\r\n");
+		DEBUGOUT("[ReadFromDriver_3x] no use\n");
 		return FALSE;
 	}
 
 	u32_write = ((p_u8_addr[0] << 24) | (g_u8_PAGE_ADDR << 16) | (0x01 << 8) | 0x82);
-	DEBUGOUT("read address 0x%x\r\n", u32_write);
+	DEBUGOUT("read address 0x%x\n", u32_write);
 	if (handle_ic_write(REG_T2D_R_CONFIG_1, 4, (unsigned char *)&u32_write, g_u8_drv_interface, I2C_WORD_MODE) == ERROR)
 		return ERROR;
 	if (handle_ic_read(REG_T2D_R_CONFIG_2, 4, p_u8_output_buf, g_u8_drv_interface, I2C_WORD_MODE) == ERROR)
 		return ERROR;
 
-	DEBUGOUT("read data 0x%x\r\n", p_u8_output_buf[0]);
+	DEBUGOUT("read data 0x%x\n", p_u8_output_buf[0]);
 	return TRUE;
 
 }
@@ -483,7 +480,7 @@ unsigned char WriteDriverByTouchMode(const unsigned char *p_u8_data, uint16_t u1
 	}
 	if (p_u8_data[0] == 0xF3 && p_u8_data[1] == 0x01) {
 		/*Check Command type*/
-		DEBUGOUT("Write Key\r\n");
+		DEBUGOUT("Write Key\n");
 		u32_write  = 0x015AFABC;
 		if (handle_ic_write(REG_T2D_CONFIG_2, 4, (unsigned char *)&u32_write, g_u8_drv_interface, I2C_WORD_MODE) == ERROR)
 			return ERROR;
@@ -496,20 +493,20 @@ unsigned char WriteDriverByTouchMode(const unsigned char *p_u8_data, uint16_t u1
 			for (u16_i = 0; u16_i < TotalDataLen; u16_i += (u8_CurCmdLen + 1)) {
 				u8_CurCmdLen = g_u8_data_buf[u16_i];
 
-				/*DEBUGOUT(" i = %d\r\n", u16_i);
+				/*DEBUGOUT(" i = %d\n", u16_i);
 				if (u8_CurCmdLen == 2)
-					DEBUGOUT("-Before Parse Data[%d] = 0x%02X, 0x%02X, 0x%02X, %d\r\n", u16_i, g_u8_data_buf[u16_i], g_u8_data_buf[u16_i + 1], g_u8_data_buf[u16_i + 2], u8_CurCmdLen);
+					DEBUGOUT("-Before Parse Data[%d] = 0x%02X, 0x%02X, 0x%02X, %d\n", u16_i, g_u8_data_buf[u16_i], g_u8_data_buf[u16_i + 1], g_u8_data_buf[u16_i + 2], u8_CurCmdLen);
 				else if (u8_CurCmdLen == 3)
-					DEBUGOUT("-Before Parse Data[%d] = 0x%02X, 0x%02X, 0x%02X, 0x%02X, %d\r\n", u16_i, g_u8_data_buf[u16_i], g_u8_data_buf[u16_i + 1], g_u8_data_buf[u16_i + 2], g_u8_data_buf[u16_i + 3], u8_CurCmdLen);
+					DEBUGOUT("-Before Parse Data[%d] = 0x%02X, 0x%02X, 0x%02X, 0x%02X, %d\n", u16_i, g_u8_data_buf[u16_i], g_u8_data_buf[u16_i + 1], g_u8_data_buf[u16_i + 2], g_u8_data_buf[u16_i + 3], u8_CurCmdLen);
 				else
-					DEBUGOUT("-Before Parse Data[%d] = 0x%02X, 0x%02X, %d\r\n", u16_i, g_u8_data_buf[u16_i], g_u8_data_buf[u16_i + 1], u8_CurCmdLen);
+					DEBUGOUT("-Before Parse Data[%d] = 0x%02X, 0x%02X, %d\n", u16_i, g_u8_data_buf[u16_i], g_u8_data_buf[u16_i + 1], u8_CurCmdLen);
 				*/
 
 				/*Check is Delay command*/
 				if (g_u8_data_buf[u16_i + 1] != 0xFF) { /*Check Command ID*/
 
 					if (wait_T2D_done_state_3x(0x50001220, 1, 100) == ERROR) {
-						DEBUGOUT("[T2DW] Check T2D idle Fail\r\n");
+						DEBUGOUT("[T2DW] Check T2D idle Fail\n");
 						return ERROR;
 					}
 
@@ -523,9 +520,9 @@ unsigned char WriteDriverByTouchMode(const unsigned char *p_u8_data, uint16_t u1
 							for (u8_j = 0 ; u8_j < u8_CurCmdLen - 1 ; u8_j++) {
 								if (g_u8_data_buf[u16_i + 2 + u8_j] != u8_read_buf[u8_j]) {
 									u8_error_flag = 1;
-									DEBUGOUT("write address:%x\r\n", g_u8_data_buf[u16_i + 1]);
-									DEBUGOUT("Data:%d\r\n", g_u8_data_buf[u16_i + 2 + u8_j]);
-									DEBUGOUT("g_u8_spi_cmd_read_buf[%d]:%x\r\n", u8_j, u8_read_buf[u8_j]);
+									DEBUGOUT("write address:%x\n", g_u8_data_buf[u16_i + 1]);
+									DEBUGOUT("Data:%d\n", g_u8_data_buf[u16_i + 2 + u8_j]);
+									DEBUGOUT("g_u8_spi_cmd_read_buf[%d]:%x\n", u8_j, u8_read_buf[u8_j]);
 								}
 							}
 							if (u8_error_flag == 0)
@@ -533,19 +530,19 @@ unsigned char WriteDriverByTouchMode(const unsigned char *p_u8_data, uint16_t u1
 							if (u8_error_flag == 1)
 								i8_retry_cnt--;
 							if (i8_retry_cnt == 0) {
-								DEBUGOUT("i8_retry_cnt error!\r\n");
+								DEBUGOUT("i8_retry_cnt error!\n");
 								return ERROR;
 							}
 						} else
 							break;
 					}*/
 				} else {
-					DEBUGOUT("Delay\r\n");
+					DEBUGOUT("Delay\n");
 					delay_ms(g_u8_data_buf[u16_i + 2]);
 				}
 			}
 		} else {
-			DEBUGOUT("[WriteDriverByTouchMode] command type not support\r\n");
+			DEBUGOUT("[WriteDriverByTouchMode] command type not support\n");
 			return ERROR;
 		}
 		u32_write  = 0x0100FABC;

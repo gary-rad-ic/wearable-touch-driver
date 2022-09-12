@@ -62,8 +62,12 @@
 #define     __O     volatile
 #define     __IO    volatile
 
+#ifndef FALSE
 #define FALSE					0x00
+#endif
+#ifndef TRUE
 #define TRUE					0x01
+#endif
 
 #define WORD					4
 

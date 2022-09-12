@@ -46,7 +46,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <linux/timer.h>
+#include <linux/time.h>
 #include <linux/delay.h>
 #include <linux/unistd.h>
 #include <linux/string.h>
@@ -58,7 +58,6 @@
 #include "raydium_driver.h"
 #include "chip_raydium/f303_ic_control.h"
 
-struct timeval timer;
 unsigned char g_u8_m_buf[2][128];
 unsigned char g_u8_ini_flash[0x400];
 struct raydium_ts_data *ts;
@@ -142,7 +141,7 @@ unsigned char read_flash_data(unsigned int u32_addr, unsigned short u16_lenth)
 				memcpy(g_u8_data_buf, g_rad_testpara_image + u32_data_offset, u16_lenth);
 			} else if (u32_addr >= F303_DONGLE_FLASH_INI_ADDR) {
 				u32_data_offset = u32_addr - F303_DONGLE_FLASH_INI_ADDR;
-				pr_info("ini addr 0x%x offset %d\r\n", u32_addr, u32_data_offset);
+				pr_info("ini addr 0x%x offset %d\n", u32_addr, u32_data_offset);
 				memcpy(g_u8_data_buf, g_u8_ini_flash + u32_data_offset, u16_lenth);
 			} else {
 				memcpy(g_u8_data_buf, g_rad_testfw_image + u32_data_offset, u16_lenth);
@@ -155,11 +154,11 @@ unsigned char read_flash_data(unsigned int u32_addr, unsigned short u16_lenth)
 
 unsigned int get_system_time(void)
 {
-	unsigned int u32_timer;
+	struct timespec64 ts;
+	ktime_get_ts64(&ts);
+	
+	return (ts.tv_sec*1000 + ts.tv_nsec/1000000);
 
-	do_gettimeofday(&timer);
-	u32_timer = (timer.tv_sec % 1000) * 1000 + (timer.tv_usec / 1000);
-	return u32_timer;
 }
 
 unsigned char gpio_touch_int_pin_state_access(void)
@@ -180,8 +179,7 @@ unsigned char gpio_touch_int_access(unsigned char u8_is_clear_flag)
 unsigned char sysfs_burn_cc_bl(void)
 {
 	unsigned char ret = ERROR;
-
-	DEBUGOUT("start sysfs_burn_cc_bl\r\n");
+	DEBUGOUT("start sysfs_burn_cc_bl\n");
 	ret = raydium_burn_comp(ts->client);
 	return ret;
 }
@@ -201,7 +199,7 @@ RETRY:
 
 	handle_ic_read(0x7B04, 4, (unsigned char *)&u32_read, g_u8_drv_interface, I2C_WORD_MODE);
 	if (u32_read != g_st_test_para_resv.u32_test_fw_version) {
-		DEBUGOUT("Read FW version NG=0x%x:0x%x!!\r\n", u32_read, g_st_test_para_resv.u32_test_fw_version);
+		DEBUGOUT("Read FW version NG=0x%x:0x%x!!\n", u32_read, g_st_test_para_resv.u32_test_fw_version);
 		goto ERROR_EXIT;
 	}
 
@@ -266,38 +264,38 @@ unsigned char handle_ic_read(
 		/*PDA2 MODE
 		*/
 		if (raydium_i2c_pda2_read(g_raydium_ts->client, (unsigned char)u32_addr, p_u8_output_buf, u8_read_len) == ERROR) {
-			DEBUGOUT("[HWP] handle_ic_read PDA2 I2C NG!\r\n");
+			DEBUGOUT("[HWP] handle_ic_read PDA2 I2C NG!\n");
 			return ERROR;
 		}
 	} else {
 		/*PDA MODE
 		*/
 		if ((u8_trans_mode == I2C_WORD_MODE) && (u32_addr & 0x00000003)) {
-			DEBUGOUT("[HRW] Handle Read Word ADDR Not Word Align!!\r\n");
+			DEBUGOUT("[HRW] Handle Read Word ADDR Not Word Align!!\n");
 			return ERROR;
 		}
 
 		if (u8_interface == SPI_INTERFACE) {
 			if (spi_read_pda(u32_addr, u8_read_len, p_u8_output_buf) == ERROR) {
-				DEBUGOUT("[HRP] handle_ic_read SPI NG!\r\n");
+				DEBUGOUT("[HRP] handle_ic_read SPI NG!\n");
 				return ERROR;
 			}
 		} else {
 			if (g_u16_dev_id == DEVICE_ID_3X) {
 				if ((u8_interface & I2C_PDA_MODE) != 0)  {
 					if (raydium_i2c_pda_read(g_raydium_ts->client, u32_addr, p_u8_output_buf, u8_read_len) == ERROR) {
-						DEBUGOUT("[HWP] handle_ic_read I2C NG!\r\n");
+						DEBUGOUT("[HWP] handle_ic_read I2C NG!\n");
 						return ERROR;
 					}
 				} else {
 					if (raydium_i2c_read_pda_via_pda2(g_raydium_ts->client, u32_addr, p_u8_output_buf, u8_read_len) == ERROR) {
-						DEBUGOUT("[HWP] handle_ic_read I2C via_pda2 NG!\r\n");
+						DEBUGOUT("[HWP] handle_ic_read I2C via_pda2 NG!\n");
 						return ERROR;
 					}
 				}
 			} else {
 				if (raydium_i2c_pda_read(g_raydium_ts->client, u32_addr, p_u8_output_buf, u8_read_len) == ERROR) {
-					DEBUGOUT("[HWP] handle_ic_read I2C NG!\r\n");
+					DEBUGOUT("[HWP] handle_ic_read I2C NG!\n");
 					return ERROR;
 				}
 			}
@@ -332,14 +330,14 @@ unsigned char handle_ic_write(
 		/*PDA2 MODE
 		*/
 		if (raydium_i2c_pda2_write(g_raydium_ts->client, (unsigned char)u32_addr, bValue, u8_write_len) == ERROR) {
-			DEBUGOUT("[HWP] handle_ic_write PDA2 I2C NG!\r\n");
+			DEBUGOUT("[HWP] handle_ic_write PDA2 I2C NG!\n");
 			return ERROR;
 		}
 	} else {
 		/*PDA MODE
 		*/
 		if ((u8_trans_mode == I2C_WORD_MODE) && (u32_addr & 0x00000003)) {
-			DEBUGOUT("[I2CRW] Handle Write Word ADDR Not Word Align!!\r\n");
+			DEBUGOUT("[I2CRW] Handle Write Word ADDR Not Word Align!!\n");
 			return ERROR;
 		}
 
@@ -361,30 +359,30 @@ unsigned char handle_ic_write(
 			case SPI_WORD_MODE:
 				break;
 			default:
-				DEBUGOUT("[HWP] handle_ic_write Trans mode NG! %d\r\n", u8_trans_mode);
+				DEBUGOUT("[HWP] handle_ic_write Trans mode NG! %d\n", u8_trans_mode);
 				return ERROR;
 			}
 
 			if (spi_write_pda(u32_addr, u8_write_len, bValue, u8_trans_mode) == ERROR) {
-				DEBUGOUT("[HWP] handle_ic_write SPI NG!\r\n");
+				DEBUGOUT("[HWP] handle_ic_write SPI NG!\n");
 				return ERROR;
 			}
 		} else {
 			if (g_u16_dev_id == DEVICE_ID_3X) {
 				if ((u8_interface & I2C_PDA_MODE) != 0)  {
 					if (raydium_i2c_pda_write(g_raydium_ts->client, u32_addr, bValue, u8_write_len) == ERROR) {
-						DEBUGOUT("[HWP] handle_ic_write I2C NG!\r\n");
+						DEBUGOUT("[HWP] handle_ic_write I2C NG!\n");
 						return ERROR;
 					}
 				} else {
 					if (raydium_i2c_write_pda_via_pda2(g_raydium_ts->client, u32_addr, bValue, u8_write_len) == ERROR) {
-						DEBUGOUT("[HWP] handle_ic_write I2C via_pda2 NG!\r\n");
+						DEBUGOUT("[HWP] handle_ic_write I2C via_pda2 NG!\n");
 						return ERROR;
 					}
 				}
 			} else {
 				if (raydium_i2c_pda_write(g_raydium_ts->client, u32_addr, bValue, u8_write_len) == ERROR) {
-					DEBUGOUT("[HWP] handle_ic_write I2C NG!\r\n");
+					DEBUGOUT("[HWP] handle_ic_write I2C NG!\n");
 					return ERROR;
 				}
 			}
@@ -412,7 +410,7 @@ unsigned char handle_display_write(
 {
 
 	if (WriteDriverByTouchMode(p_u8_data, u16DataLength) == ERROR) {
-		DEBUGOUT("[HDW] WriteDriverByTouchMode NG!\r\n");
+		DEBUGOUT("[HDW] WriteDriverByTouchMode NG!\n");
 		return ERROR;
 	}
 
